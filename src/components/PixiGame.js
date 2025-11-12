@@ -174,9 +174,9 @@ class PixiGame {
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundColor: 0x87ceeb,
-      resolution: this.isLowPerformanceMode ? 1 : window.devicePixelRatio || 1,
+      resolution: window.devicePixelRatio || 1, // 始终使用设备像素比，适配高DPI屏幕
       autoDensity: true,
-      antialias: !this.isLowPerformanceMode, // 低性能模式关闭抗锯齿
+      antialias: true, // 开启抗锯齿，提高画质
       powerPreference: "high-performance",
       autoStart: true,
     });
