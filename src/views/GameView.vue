@@ -1,5 +1,16 @@
 <template>
   <div class="game-container">
+    <!-- 加载进度提示 -->
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">{{ loadingText }}</div>
+        <div class="loading-bar">
+          <div class="loading-progress" :style="{ width: loadingProgress + '%' }"></div>
+        </div>
+      </div>
+    </div>
+
     <div ref="pixiContainer" class="pixi-container"></div>
 
     <div class="game-ui">
@@ -90,10 +101,27 @@
       const isPrize = ref(false);
       const prizeTitle = ref("");
       const isMuted = ref(true); // 默认静音
+      const isLoading = ref(true);
+      const loadingProgress = ref(0);
+      const loadingText = ref("正在加载资源...");
       let game = null;
 
       onMounted(() => {
         game = new PixiGame(pixiContainer.value);
+        
+        // 设置加载进度回调
+        game.onLoadProgress = (progress, text) => {
+          loadingProgress.value = Math.round(progress * 100);
+          loadingText.value = text;
+          
+          // 加载完成后隐藏加载界面
+          if (progress >= 1) {
+            setTimeout(() => {
+              isLoading.value = false;
+            }, 500);
+          }
+        };
+        
         game.init();
 
         // 监听窗口大小变化
@@ -198,6 +226,9 @@
         isPrize,
         prizeTitle,
         isMuted,
+        isLoading,
+        loadingProgress,
+        loadingText,
         laoButtonImage,
         zhufuButtonImage,
         throwBottle,
@@ -219,6 +250,67 @@
     width: 100%;
     height: 100vh;
     overflow: hidden;
+  }
+
+  /* 加载界面 */
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .loading-content {
+    text-align: center;
+    color: white;
+  }
+
+  .loading-spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 30px;
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-text {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .loading-bar {
+    width: 400px;
+    max-width: 80vw;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
+  .loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #56ab2f 0%, #a8e063 100%);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(168, 224, 99, 0.5);
   }
 
   .pixi-container {

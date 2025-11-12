@@ -258,9 +258,57 @@ class PixiGame {
     }
   }
 
-  loadResources() {
+  async loadResources() {
     try {
-      // 直接创建纹理，因为我们已经导入了图片
+      // 显示加载提示
+      if (this.onLoadProgress) {
+        this.onLoadProgress(0, "正在加载资源...");
+      }
+
+      // 使用PIXI.Assets异步加载所有资源
+      const assets = [
+        { name: 'bottle', url: this.bottleImageUrl },
+        { name: 'bottle1', url: this.bottle1ImageUrl },
+        { name: 'net', url: this.netImageUrl },
+        { name: 'title', url: this.titleImageUrl },
+        { name: 'dao1', url: this.dao1ImageUrl },
+        { name: 'dao2', url: this.dao2ImageUrl },
+        { name: 'beach', url: this.beachImageUrl },
+      ];
+
+      // 添加所有资源到加载器
+      assets.forEach(asset => {
+        PIXI.Assets.add(asset.name, asset.url);
+      });
+
+      // 加载所有资源并显示进度
+      const textures = await PIXI.Assets.load(
+        assets.map(a => a.name),
+        (progress) => {
+          if (this.onLoadProgress) {
+            this.onLoadProgress(progress, `加载中 ${Math.round(progress * 100)}%`);
+          }
+        }
+      );
+
+      // 创建资源对象
+      this.resources = {};
+      assets.forEach(asset => {
+        this.resources[asset.name] = { texture: textures[asset.name] };
+      });
+
+      console.log("资源加载成功:", this.resources);
+
+      // 加载完成后创建场景
+      if (this.onLoadProgress) {
+        this.onLoadProgress(1, "加载完成");
+      }
+      
+      this.setupScene();
+    } catch (error) {
+      console.error("加载资源失败:", error);
+      
+      // 降级方案：使用Texture.from
       this.resources = {
         bottle: { texture: PIXI.Texture.from(this.bottleImageUrl) },
         bottle1: { texture: PIXI.Texture.from(this.bottle1ImageUrl) },
@@ -270,17 +318,6 @@ class PixiGame {
         dao2: { texture: PIXI.Texture.from(this.dao2ImageUrl) },
         beach: { texture: PIXI.Texture.from(this.beachImageUrl) },
       };
-
-      console.log("资源加载成功:", this.resources);
-
-      // 直接创建场景，不等待纹理加载（Vite已经预加载）
-      this.setupScene();
-    } catch (error) {
-      console.error("加载资源失败:", error);
-      console.log("尝试使用绘制的瓶子代替");
-
-      // 初始化空资源对象
-      this.resources = {};
 
       // 即使加载失败也继续设置场景
       this.setupScene();
