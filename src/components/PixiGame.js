@@ -17,10 +17,10 @@ import beachImage from "../assets/沙滩.png"; // 沙滩背景图
 const ELEMENT_SCALES = {
   // 瓶子相关
   bottle: {
-    inSea: 1.2, // 海里漂浮的瓶子 (bottle1.png)
-    throwing: 1.8, // 扔出时的瓶子 (bottle.png)
-    landed: 1.2, // 落地后的瓶子 (bottle1.png)
-    caught: 0.04, // 被捕获的瓶子
+    inSea: 1, // 海里漂浮的瓶子 (bottle1.png)
+    throwing: 7, // 扔出时的瓶子 (bottle.png)
+    landed: 1, // 落地后的瓶子 (bottle1.png)
+    caught: 0.15, // 被捕获的瓶子
   },
 
   // 场景元素
@@ -187,9 +187,9 @@ class PixiGame {
     });
 
     // 优化canvas样式，防止模糊
-    this.app.view.style.width = window.innerWidth + 'px';
-    this.app.view.style.height = window.innerHeight + 'px';
-    this.app.view.style.display = 'block';
+    this.app.view.style.width = window.innerWidth + "px";
+    this.app.view.style.height = window.innerHeight + "px";
+    this.app.view.style.display = "block";
 
     // 添加到DOM
     this.container.appendChild(this.app.view);
@@ -215,10 +215,10 @@ class PixiGame {
     const resolution = window.devicePixelRatio || 1;
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
     this.app.renderer.resolution = resolution;
-    
+
     // 更新canvas样式
-    this.app.view.style.width = window.innerWidth + 'px';
-    this.app.view.style.height = window.innerHeight + 'px';
+    this.app.view.style.width = window.innerWidth + "px";
+    this.app.view.style.height = window.innerHeight + "px";
 
     // 重新布局所有元素
     this.repositionElements();
@@ -267,23 +267,23 @@ class PixiGame {
 
       // 使用PIXI.Assets异步加载所有资源
       const assets = [
-        { name: 'bottle', url: this.bottleImageUrl },
-        { name: 'bottle1', url: this.bottle1ImageUrl },
-        { name: 'net', url: this.netImageUrl },
-        { name: 'title', url: this.titleImageUrl },
-        { name: 'dao1', url: this.dao1ImageUrl },
-        { name: 'dao2', url: this.dao2ImageUrl },
-        { name: 'beach', url: this.beachImageUrl },
+        { name: "bottle", url: this.bottleImageUrl },
+        { name: "bottle1", url: this.bottle1ImageUrl },
+        { name: "net", url: this.netImageUrl },
+        { name: "title", url: this.titleImageUrl },
+        { name: "dao1", url: this.dao1ImageUrl },
+        { name: "dao2", url: this.dao2ImageUrl },
+        { name: "beach", url: this.beachImageUrl },
       ];
 
       // 添加所有资源到加载器
-      assets.forEach(asset => {
+      assets.forEach((asset) => {
         PIXI.Assets.add(asset.name, asset.url);
       });
 
       // 加载所有资源并显示进度
       const textures = await PIXI.Assets.load(
-        assets.map(a => a.name),
+        assets.map((a) => a.name),
         (progress) => {
           if (this.onLoadProgress) {
             this.onLoadProgress(progress, `加载中 ${Math.round(progress * 100)}%`);
@@ -293,7 +293,7 @@ class PixiGame {
 
       // 创建资源对象
       this.resources = {};
-      assets.forEach(asset => {
+      assets.forEach((asset) => {
         this.resources[asset.name] = { texture: textures[asset.name] };
       });
 
@@ -303,11 +303,11 @@ class PixiGame {
       if (this.onLoadProgress) {
         this.onLoadProgress(1, "加载完成");
       }
-      
+
       this.setupScene();
     } catch (error) {
       console.error("加载资源失败:", error);
-      
+
       // 降级方案：使用Texture.from
       this.resources = {
         bottle: { texture: PIXI.Texture.from(this.bottleImageUrl) },
