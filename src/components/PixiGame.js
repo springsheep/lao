@@ -133,8 +133,8 @@ class PixiGame {
 
     // 性能优化参数
     this.lastFrameTime = 0;
-    this.frameInterval = 1000 / 30; // 目标帧率为30fps
-    this.isLowPerformanceMode = this.deviceInfo.isMobile; // 移动端默认低性能模式
+    this.frameInterval = 1000 / 60; // 目标帧率为60fps
+    this.isLowPerformanceMode = false; // 始终高性能模式，确保画质
 
     // 图片资源 - 使用导入的真实图片
     this.bottleImageUrl = bottleImage; // 完整瓶子(用于扔和捞)
@@ -169,6 +169,11 @@ class PixiGame {
   }
 
   init() {
+    // 优化渲染器设置 - 必须在创建app之前设置
+    PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR; // 使用线性缩放，画质更好
+    PIXI.settings.ROUND_PIXELS = false; // 不取整像素，避免位置偏移
+
     // 创建PIXI应用
     this.app = new PIXI.Application({
       width: window.innerWidth,
@@ -181,15 +186,16 @@ class PixiGame {
       autoStart: true,
     });
 
+    // 优化canvas样式，防止模糊
+    this.app.view.style.width = window.innerWidth + 'px';
+    this.app.view.style.height = window.innerHeight + 'px';
+    this.app.view.style.display = 'block';
+
     // 添加到DOM
     this.container.appendChild(this.app.view);
 
     // 监听窗口大小变化
     window.addEventListener("resize", () => this.handleResize());
-
-    // 优化渲染器设置
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR; // 使用线性缩放，画质更好
-    PIXI.settings.ROUND_PIXELS = false; // 不取整像素，避免位置偏移
 
     // 预加载音效
     soundManager.preload();
@@ -209,6 +215,10 @@ class PixiGame {
     const resolution = window.devicePixelRatio || 1;
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
     this.app.renderer.resolution = resolution;
+    
+    // 更新canvas样式
+    this.app.view.style.width = window.innerWidth + 'px';
+    this.app.view.style.height = window.innerHeight + 'px';
 
     // 重新布局所有元素
     this.repositionElements();
@@ -263,17 +273,8 @@ class PixiGame {
 
       console.log("资源加载成功:", this.resources);
 
-      // 等待沙滩纹理加载完成后再创建场景
-      const beachTexture = this.resources.beach.texture;
-      if (beachTexture.baseTexture.valid) {
-        // 纹理已经加载完成
-        this.setupScene();
-      } else {
-        // 等待纹理加载完成
-        beachTexture.baseTexture.on("loaded", () => {
-          this.setupScene();
-        });
-      }
+      // 直接创建场景，不等待纹理加载（Vite已经预加载）
+      this.setupScene();
     } catch (error) {
       console.error("加载资源失败:", error);
       console.log("尝试使用绘制的瓶子代替");
@@ -1247,8 +1248,8 @@ class PixiGame {
         wave.clear();
         wave.beginFill(data.color, data.alpha);
 
-        // 根据性能模式调整精度
-        const step = this.isLowPerformanceMode ? 20 : 8;
+        // 使用固定精度
+        const step = 8;
 
         // 使用贝塞尔曲线绘制波浪
         const points = [];
@@ -1318,7 +1319,7 @@ class PixiGame {
     const smoothDelta = delta / PIXI.settings.TARGET_FPMS / 60;
 
     // 更新波浪动画
-    this.waveTime += this.isLowPerformanceMode ? 0.005 : 0.01; // 低性能模式下减慢动画
+    this.waveTime += 0.01; // 统一动画速度
     this.updateSea();
 
     // 更新气泡
