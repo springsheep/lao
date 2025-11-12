@@ -188,8 +188,8 @@ class PixiGame {
     window.addEventListener("resize", () => this.handleResize());
 
     // 优化渲染器设置
-    PIXI.settings.SCALE_MODE = this.isLowPerformanceMode ? PIXI.SCALE_MODES.NEAREST : PIXI.SCALE_MODES.LINEAR;
-    PIXI.settings.ROUND_PIXELS = this.isLowPerformanceMode;
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR; // 使用线性缩放，画质更好
+    PIXI.settings.ROUND_PIXELS = false; // 不取整像素，避免位置偏移
 
     // 预加载音效
     soundManager.preload();
@@ -205,8 +205,10 @@ class PixiGame {
     // 重新计算缩放因子
     this.scaleFactor = this.calculateScaleFactor();
 
-    // 调整画布大小
+    // 调整画布大小，保持 resolution
+    const resolution = window.devicePixelRatio || 1;
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
+    this.app.renderer.resolution = resolution;
 
     // 重新布局所有元素
     this.repositionElements();
