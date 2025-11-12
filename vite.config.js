@@ -12,6 +12,7 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
+  outputDir: "docs",
   css: {
     postcss: {
       plugins: [
