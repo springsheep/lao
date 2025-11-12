@@ -461,6 +461,11 @@
     height: 100vh;
     position: relative;
     overflow: hidden;
+    /* 适配iOS安全距离 */
+    padding-top: constant(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .game-content {

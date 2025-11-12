@@ -108,12 +108,12 @@
 
       onMounted(() => {
         game = new PixiGame(pixiContainer.value);
-        
+
         // 设置加载进度回调
         game.onLoadProgress = (progress, text) => {
           loadingProgress.value = Math.round(progress * 100);
           loadingText.value = text;
-          
+
           // 加载完成后隐藏加载界面
           if (progress >= 1) {
             setTimeout(() => {
@@ -121,7 +121,7 @@
             }, 500);
           }
         };
-        
+
         game.init();
 
         // 监听窗口大小变化
@@ -250,6 +250,11 @@
     width: 100%;
     height: 100vh;
     overflow: hidden;
+    /* 适配iOS安全距离 */
+    padding-top: constant(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* 加载界面 */

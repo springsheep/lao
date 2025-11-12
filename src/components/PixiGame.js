@@ -645,7 +645,7 @@ class PixiGame {
       this.island1.scale.set(scale);
       this.island1.anchor.set(0, 1); // 锚点在左下角
       this.island1.x = 0; // 左侧
-      this.island1.y = this.app.screen.height * 0.58; // 海天交接处
+      this.island1.y = this.app.screen.height * 0.555; // 海天交接处
 
       // 添加到舞台，确保在瓶子下层
       this.app.stage.addChildAt(this.island1, 1);
@@ -664,7 +664,7 @@ class PixiGame {
       this.island2.scale.set(scale);
       this.island2.anchor.set(1, 1); // 锚点在右下角
       this.island2.x = this.app.screen.width; // 右侧
-      this.island2.y = this.app.screen.height * 0.59; // 往下调整一点
+      this.island2.y = this.app.screen.height * 0.56; // 往下调整一点
 
       // 添加到舞台，确保在瓶子下层
       this.app.stage.addChildAt(this.island2, 1);
