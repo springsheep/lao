@@ -1,0 +1,23 @@
+{
+  "name": "drift-bottle-game",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pixi.js": "^7.3.2",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5",
+    "gsap": "^3.12.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "vite": "^4.4.11",
+    "postcss-px-to-viewport": "^1.1.1",
+    "autoprefixer": "^10.4.16"
+  }
+}
